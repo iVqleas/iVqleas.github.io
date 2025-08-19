@@ -5,60 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>iVqleas.Tools</title>
 <style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #0d0d0d, #1a001a);
-    color: white;
-    text-align: center;
-  }
-  nav {
-    background: #2e003e;
-    padding: 15px;
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-  }
-  nav a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  nav a:hover { color: #b366ff; }
-  .section { display: none; padding: 50px 20px; }
-  .active { display: block; }
-  .stat-box {
-    margin: 20px auto;
-    padding: 20px;
-    background: #1a001f;
-    border-radius: 12px;
-    width: 300px;
-  }
-  button {
-    padding: 10px 20px;
-    background: #b366ff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  button:hover { background: #d49fff; color: #2e003e; }
-  .leaderboard, .profile-box {
-    margin: 0 auto;
-    max-width: 400px;
-    text-align: left;
-    background: #1a001f;
-    border-radius: 12px;
-    padding: 20px;
-  }
-  .leaderboard li { margin: 8px 0; padding: 8px; background: #2e003e; border-radius: 8px; }
-  footer { margin-top: 50px; padding: 20px; background: #2e003e; color: #888; }
+body { margin:0; font-family:Arial,sans-serif; background:#0d0d0d; color:white; text-align:center; }
+nav { background:#2e003e; padding:15px; display:flex; justify-content:center; gap:25px; }
+nav a { color:white; text-decoration:none; font-weight:bold; cursor:pointer; padding:5px 10px; border-radius:8px; }
+nav a:hover { background:#b366ff; color:#2e003e; transition:0.3s; }
+.section { display:none; padding:30px 20px; }
+.active { display:block; }
+.stat-box, .profile-box, .leaderboard { background:#1a001f; border-radius:12px; padding:20px; margin:20px auto; max-width:350px; }
+button { padding:10px 20px; background:#b366ff; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold; }
+button:hover { background:#d49fff; color:#2e003e; transition:0.3s; }
+.leaderboard li { margin:8px 0; padding:8px; background:#2e003e; border-radius:8px; list-style:none; }
 </style>
 </head>
 <body>
-  <nav>
+<nav>
   <a onclick="showSection('home')">Home</a>
   <a onclick="showSection('leaderboard')">Leaderboard</a>
   <a onclick="showSection('profile')">Profile</a>
@@ -68,13 +28,13 @@
 <!-- Home -->
 <div id="home" class="section active">
   <h1>Welcome to iVqleas.Tools</h1>
-  <p>A clean purple & black themed site for the community.</p>
+  <p>A guns.lol-inspired purple & black site!</p>
 
   <div class="stat-box">
-    <h2>💜 Trusted by <span id="trustCount">1,990</span> people!</h2>
-    <button onclick="increaseTrust()">Trust Us</button>
+    <h2>💜 Trusted by <span id="trustCount">0</span> people!</h2>
+    <button id="trustBtn">Click to earn trust points!</button>
+    <p id="trustMessage"></p>
   </div>
-
   <p>👀 Visitors: <span id="visitorCount">0</span></p>
 </div>
 
@@ -82,9 +42,9 @@
 <div id="leaderboard" class="section">
   <h2>🏆 Leaderboard</h2>
   <ul class="leaderboard" id="leaderboardList">
-    <li>1. iVqleas — OG Rank</li>
-    <li>2. Ky — Trusted Rank</li>
-    <li>3. Guest123 — Member</li>
+    <li>1. iVqleas — OG Rank — 1000 pts</li>
+    <li>2. Ky — Trusted Rank — 850 pts</li>
+    <li>3. Guest123 — Member — 200 pts</li>
   </ul>
 </div>
 
@@ -94,6 +54,9 @@
   <div class="profile-box">
     <p>Name: <span id="profileName">Your Name</span></p>
     <p>Bio: <span id="profileBio">Write something about yourself...</span></p>
+    <p>Theme color: <span id="profileColor">Purple</span></p>
+    <p>Links: <span id="profileLinks">None</span></p>
+    <p>Avatar: <span id="profileAvatar">Default</span></p>
     <button onclick="editProfile()">Edit Profile</button>
   </div>
 </div>
@@ -103,39 +66,44 @@
   <h2>📜 Credits</h2>
   <p>Created by <strong>iVqleas</strong></p>
 </div>
+
 <footer>
   <p>&copy; 2025 iVqleas.Tools | All Rights Reserved</p>
 </footer>
-
 <script>
-  // Tab navigation
-  function showSection(sectionId) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById(sectionId).classList.add('active');
-  }
+// Tab navigation
+function showSection(id){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
-  // Visitor counter (per browser)
-  let visitorCount = localStorage.getItem("visitors") || 0;
-  visitorCount++;
-  localStorage.setItem("visitors", visitorCount);
-  document.getElementById("visitorCount").innerText = visitorCount;
+// Visitor counter
+let visitorCount = localStorage.getItem("visitors")||0;
+visitorCount++; localStorage.setItem("visitors",visitorCount);
+document.getElementById("visitorCount").innerText = visitorCount;
 
-  // Trust counter (per browser)
-  let trust = localStorage.getItem("trust") || 1990;
-  document.getElementById("trustCount").innerText = trust;
-  function increaseTrust() {
-    trust++;
-    localStorage.setItem("trust", trust);
-    document.getElementById("trustCount").innerText = trust;
-  }
+// Trust clicking game
+let trustPoints=0;
+const trustBtn=document.getElementById("trustBtn");
+const trustCount=document.getElementById("trustCount");
+const trustMessage=document.getElementById("trustMessage");
+trustBtn.onclick=function(){
+  let points=Math.floor(Math.random()*5)+1;
+  trustPoints+=points;
+  trustCount.innerText=trustPoints;
+  trustMessage.innerText=`You earned ${points} trust points!`;
+}
 
-  // Profile editing
-  function editProfile() {
-    let name = prompt("Enter your name:", document.getElementById("profileName").innerText);
-    let bio = prompt("Enter your bio:", document.getElementById("profileBio").innerText);
-    if(name) document.getElementById("profileName").innerText = name;
-    if(bio) document.getElementById("profileBio").innerText = bio;
-  }
+// Profile editing
+function editProfile(){
+  let name=prompt("Enter your name:",document.getElementById("profileName").innerText);
+  let bio=prompt("Enter your bio:",document.getElementById("profileBio").innerText);
+  let color=prompt("Enter theme color:",document.getElementById("profileColor").innerText);
+  let links=prompt("Add links (comma separated):",document.getElementById("profileLinks").innerText);
+  let avatar=prompt("Avatar (image URL or default):",document.getElementById("profileAvatar").innerText);
+  if(name) document.getElementById("profileName").innerText=name;
+  if(bio) document.getElementById("profileBio").innerText=bio;
+  if(color) document.getElementById("profileColor").innerText=color;
+  if(links) document.getElementById("profileLinks").innerText=links;
+  if(avatar) document.getElementById("profileAvatar").innerText=avatar;
+}
 </script>
 </body>
 </html>
