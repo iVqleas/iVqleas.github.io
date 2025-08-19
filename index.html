@@ -1,58 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>iVqleas.Tools</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0d0d0d, #1a001a);
-      color: #fff;
-      text-align: center;
-    }
-    header {
-      background: #2e003e;
-      padding: 20px;
-    }
-    nav a {
-      margin: 0 15px;
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    nav a:hover {
-      color: #b366ff;
-    }
-    .section {
-      padding: 50px 20px;
-    }
-    footer {
-      background: #2e003e;
-      padding: 10px;
-      margin-top: 30px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iVqleas.Tools</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0d0d0d, #1a001a);
+    color: white;
+    text-align: center;
+  }
+  nav {
+    background: #2e003e;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+  }
+  nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  nav a:hover { color: #b366ff; }
+  .section { display: none; padding: 50px 20px; }
+  .active { display: block; }
+  .stat-box {
+    margin: 20px auto;
+    padding: 20px;
+    background: #1a001f;
+    border-radius: 12px;
+    width: 300px;
+  }
+  button {
+    padding: 10px 20px;
+    background: #b366ff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  button:hover { background: #d49fff; color: #2e003e; }
+  .leaderboard, .profile-box {
+    margin: 0 auto;
+    max-width: 400px;
+    text-align: left;
+    background: #1a001f;
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .leaderboard li { margin: 8px 0; padding: 8px; background: #2e003e; border-radius: 8px; }
+  footer { margin-top: 50px; padding: 20px; background: #2e003e; color: #888; }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Welcome to iVqleas.Tools</h1>
-    <nav>
-      <a href="#">Home</a>
-      <a href="#">Leaderboard</a>
-      <a href="#">Profile</a>
-      <a href="#">Credits</a>
-    </nav>
-  </header>
+  <nav>
+  <a onclick="showSection('home')">Home</a>
+  <a onclick="showSection('leaderboard')">Leaderboard</a>
+  <a onclick="showSection('profile')">Profile</a>
+  <a onclick="showSection('credits')">Credits</a>
+</nav>
 
-  <div class="section">
-    <h2>🚀 Your site is live soon!</h2>
-    <p>This is a placeholder. We’ll add leaderboards, profiles, and more.</p>
+<!-- Home -->
+<div id="home" class="section active">
+  <h1>Welcome to iVqleas.Tools</h1>
+  <p>A clean purple & black themed site for the community.</p>
+
+  <div class="stat-box">
+    <h2>💜 Trusted by <span id="trustCount">1,990</span> people!</h2>
+    <button onclick="increaseTrust()">Trust Us</button>
   </div>
 
-  <footer>
-    <p>© 2025 iVqleas.Tools</p>
-  </footer>
+  <p>👀 Visitors: <span id="visitorCount">0</span></p>
+</div>
+
+<!-- Leaderboard -->
+<div id="leaderboard" class="section">
+  <h2>🏆 Leaderboard</h2>
+  <ul class="leaderboard" id="leaderboardList">
+    <li>1. iVqleas — OG Rank</li>
+    <li>2. Ky — Trusted Rank</li>
+    <li>3. Guest123 — Member</li>
+  </ul>
+</div>
+
+<!-- Profile -->
+<div id="profile" class="section">
+  <h2>👤 Your Profile</h2>
+  <div class="profile-box">
+    <p>Name: <span id="profileName">Your Name</span></p>
+    <p>Bio: <span id="profileBio">Write something about yourself...</span></p>
+    <button onclick="editProfile()">Edit Profile</button>
+  </div>
+</div>
+
+<!-- Credits -->
+<div id="credits" class="section">
+  <h2>📜 Credits</h2>
+  <p>Created by <strong>iVqleas</strong></p>
+</div>
+<footer>
+  <p>&copy; 2025 iVqleas.Tools | All Rights Reserved</p>
+</footer>
+
+<script>
+  // Tab navigation
+  function showSection(sectionId) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(sectionId).classList.add('active');
+  }
+
+  // Visitor counter (per browser)
+  let visitorCount = localStorage.getItem("visitors") || 0;
+  visitorCount++;
+  localStorage.setItem("visitors", visitorCount);
+  document.getElementById("visitorCount").innerText = visitorCount;
+
+  // Trust counter (per browser)
+  let trust = localStorage.getItem("trust") || 1990;
+  document.getElementById("trustCount").innerText = trust;
+  function increaseTrust() {
+    trust++;
+    localStorage.setItem("trust", trust);
+    document.getElementById("trustCount").innerText = trust;
+  }
+
+  // Profile editing
+  function editProfile() {
+    let name = prompt("Enter your name:", document.getElementById("profileName").innerText);
+    let bio = prompt("Enter your bio:", document.getElementById("profileBio").innerText);
+    if(name) document.getElementById("profileName").innerText = name;
+    if(bio) document.getElementById("profileBio").innerText = bio;
+  }
+</script>
 </body>
 </html>
